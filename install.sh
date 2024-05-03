@@ -31,10 +31,10 @@ PIKONEK_LOCAL_REPO="/etc/pikonek"
 PIKONEK_INSTALL_DIR="/etc/.pikonek"
 # shellcheck disable=SC2034
 webroot="/var/www/html"
-pikonekScriptGitUrl="https://github.com/prod-pikonek/pikonek-install.git"
-pikonekGitUrl="https://github.com/prod-pikonek/pikonek-${ARCH}.git"
-pikonekPPPoeUrl="https://github.com/prod-pikonek/rp-pppoe.git"
-pikonekSQMUrl="https://github.com/prod-pikonek/sqm-scripts.git"
+pikonekScriptGitUrl="https://github.com/beta-pikonek/pikonek-install.git"
+pikonekGitUrl="https://github.com/beta-pikonek/pikonek-${ARCH}.git"
+pikonekPPPoeUrl="https://github.com/beta-pikonek/rp-pppoe.git"
+pikonekSQMUrl="https://github.com/beta-pikonek/sqm-scripts.git"
 CMDLINE=/proc/cmdline
 
 PIKONEK_BIN_DIR="/usr/local/bin"
