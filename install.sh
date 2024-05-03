@@ -31,8 +31,8 @@ PIKONEK_LOCAL_REPO="/etc/pikonek"
 PIKONEK_INSTALL_DIR="/etc/.pikonek"
 # shellcheck disable=SC2034
 webroot="/var/www/html"
-pikonekScriptGitUrl="https://github.com/beta-pikonek/pikonek-install.git"
-pikonekGitUrl="https://github.com/beta-pikonek/pikonek-${ARCH}.git"
+pikonekScriptGitUrl="https://github.com/prod-pikonek/pikonek-install.git"
+pikonekGitUrl="https://github.com/prod-pikonek/pikonek-${ARCH}.git"
 pikonekPPPoeUrl="https://github.com/prod-pikonek/rp-pppoe.git"
 pikonekSQMUrl="https://github.com/prod-pikonek/sqm-scripts.git"
 CMDLINE=/proc/cmdline
@@ -277,9 +277,9 @@ distro_check() {
         # Since our install script is so large, we need several other programs to successfully get a machine provisioned
         # These programs are stored in an array so they can be looped through later
         if [ "$ARCH" = "arm64" ] ; then
-            INSTALLER_DEPS=(build-essential python3.7-dev python3.7-venv virt-what libssl-dev libffi-dev ipcalc lighttpd python3.7 sqlite3 dnsmasq dnsmasq-utils vlan bridge-utils gawk curl cron wget iptables ipset whiptail git openssl ifupdown ntp wpasupplicant gnupg lsb-release ca-certificates mosquitto)
+            INSTALLER_DEPS=(build-essential python3.7-dev python3-venv python3.7-venv virt-what libssl-dev libffi-dev ipcalc lighttpd python3.7 sqlite3 dnsmasq dnsmasq-utils vlan bridge-utils gawk curl cron wget iptables ipset whiptail git openssl ifupdown ntp wpasupplicant gnupg lsb-release ca-certificates mosquitto)
         else
-            INSTALLER_DEPS=(build-essential gcc-multilib python3.7-dev python3.7-venv virt-what libssl-dev libffi-dev ipcalc lighttpd python3.7 sqlite3 dnsmasq dnsmasq-utils vlan bridge-utils gawk curl cron wget iptables ipset whiptail git openssl ifupdown ntp wpasupplicant gnupg lsb-release ca-certificates mosquitto)
+            INSTALLER_DEPS=(build-essential gcc-multilib python3.7-dev python3-venv python3.7-venv virt-what libssl-dev libffi-dev ipcalc lighttpd python3.7 sqlite3 dnsmasq dnsmasq-utils vlan bridge-utils gawk curl cron wget iptables ipset whiptail git openssl ifupdown ntp wpasupplicant gnupg lsb-release ca-certificates mosquitto)
         fi
         # A function to check...
         test_dpkg_lock() {
@@ -1571,6 +1571,8 @@ installpikonek() {
     if [[ ! -f /etc/pikonek/license/license.lic ]]; then
         cp ${PIKONEK_LOCAL_REPO}/license/license.lic.trial ${PIKONEK_LOCAL_REPO}/license/license.lic
     fi
+
+    export PYARMOR_LICENSE="${PIKONEK_LOCAL_REPO}/license/license.lic"
     
     # install web server
     installpikonekWebServer
@@ -1818,23 +1820,30 @@ notify_package_updates_available() {
 pip_install_packages() {
     printf "  %b Installing required package for pikonek core...\\n" "${INFO}"
     printf "  %b Please wait and have some coffee...\\n" "${INFO}"
-    printf '%*s\n' "$columns" '' | tr " " -;
+    # printf '%*s\n' "$columns" '' | tr " " -;
     # create virtual env
+    printf "  %b Creating virtual environment...\\n" "${INFO}"
     python3.7 -m venv "${PIKONEK_LOCAL_REPO}/venv" &> /dev/null
     # upgrade pip
+    printf "  %b Upgrading pip...\\n" "${INFO}"
     "${PIKONEK_LOCAL_REPO}"/venv/bin/python3.7 -m pip install -U pip==22.2.2 &> /dev/null
     # Install wheel
+    printf "  %b Installing wheel...\\n" "${INFO}"
     "${PIKONEK_LOCAL_REPO}"/venv/bin/python3.7 -m pip install wheel==0.37.1 &> /dev/null
     # Upgrade setuptools
+    printf "  %b Upgrading setuptools...\\n" "${INFO}"
     "${PIKONEK_LOCAL_REPO}"/venv/bin/python3.7 -m pip install -U setuptools==59.6.0 &> /dev/null
+    "${PIKONEK_LOCAL_REPO}"/venv/bin/python3.7 -m pip install -U simplejson==3.17.6 &> /dev/null
+
 
     # Install tcconfig outside of venv
     # python3.7 -m pip install tcconfig==0.25.2 &> /dev/null
+    printf "  %b Installing dependencies...\\n" "${INFO}"
     "${PIKONEK_LOCAL_REPO}"/venv/bin/python3.7 -m pip install -r "${PIKONEK_LOCAL_REPO}/requirements.txt" &> /dev/null || \
     { printf "  %bUnable to install required pikonek core dependencies, unable to continue%b\\n" "${COL_LIGHT_RED}" "${COL_NC}"; \
     exit 1; \
     }
-    printf '%*s\n' "$columns" '' | tr " " -;
+    # printf '%*s\n' "$columns" '' | tr " " -;
     printf "\\n"
 }
 
@@ -2631,9 +2640,6 @@ main() {
         update_repo "${PIKONEK_LOCAL_REPO}" ${pikonekGitUrl} || { printf "\\n  %b: Could not update local repository. Contact support.%b\\n" "${COL_LIGHT_RED}" "${COL_NC}"; exit 1; }
     fi
 
-    # Install the Core dependencies
-    pip_install_packages
-
     # On some systems, lighttpd is not enabled on first install. We need to enable it here if the user
     # has chosen to install the web interface, else the `LIGHTTPD_ENABLED` check will fail
     enable_service lighttpd
@@ -2652,6 +2658,9 @@ main() {
     if [[ "${useUpdate}" == false ]]; then
         finalExports
     fi
+
+    # Install the Core dependencies
+    pip_install_packages
     
     configurePikonekCore
     # configure the database
