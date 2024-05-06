@@ -10,6 +10,7 @@
 DEFAULT="-1"
 COREGITDIR="/etc/pikonek/"
 SCRIPTGITDIR="/etc/.pikonek/"
+BUILD_ENV=beta
 
 # Source the setupvars config file
 # shellcheck disable=SC1091

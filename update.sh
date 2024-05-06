@@ -5,6 +5,7 @@
 # Please see LICENSE file for your rights under this license.
 
 # Variables
+BUILD_ENV=beta
 ARCH=$(dpkg --print-architecture)
 readonly PIKONEK_GIT_URL="https://github.com/beta-pikonek/pikonek-${ARCH}.git"
 readonly PIKONEK_SCRIPTS_GIT_URL="https://github.com/beta-pikonek/pikonek-install.git"
