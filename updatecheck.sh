@@ -6,7 +6,7 @@
 BUILD_ENV=beta
 PIKONEK_AMD64="https://api.github.com/repos/beta-pikonek/pikonek-amd64/releases/latest"
 PIKONEK_ARM64="https://api.github.com/repos/beta-pikonek/pikonek-arm64/releases/latest"
-PIKONKE_ARMHF="https://api.github.com/repos/beta-pikonek/pikonek-armhf/releases/latest"
+PIKONEK_ARMHF="https://api.github.com/repos/beta-pikonek/pikonek-armhf/releases/latest"
 PIKONEK_INSTALL="https://api.github.com/repos/beta-pikonek/pikonek-install/releases/latest"
 
 # Credit: https://stackoverflow.com/a/46324904
@@ -50,9 +50,9 @@ if [[ "$2" == "remote" ]]; then
     if [ "$ARCH" == "amd64" ]; then
         GITHUB_CORE_VERSION="$(json_extract tag_name "$(curl -s ${PIKONEK_AMD64} 2> /dev/null)")"
     elif [ "$ARCH" == "amd64" ]; then
-        GITHUB_CORE_VERSION="$(json_extract tag_name "$(curl -s ${PIKONKE_ARM64} 2> /dev/null)")"
+        GITHUB_CORE_VERSION="$(json_extract tag_name "$(curl -s ${PIKONEK_ARM64} 2> /dev/null)")"
     else
-        GITHUB_CORE_VERSION="$(json_extract tag_name "$(curl -s ${PIKONKE_ARMHF} 2> /dev/null)")"
+        GITHUB_CORE_VERSION="$(json_extract tag_name "$(curl -s ${PIKONEK_ARMHF} 2> /dev/null)")"
     fi
     
     echo -n "${GITHUB_CORE_VERSION}" >> "${GITHUB_VERSION_FILE}"
