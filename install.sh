@@ -2695,12 +2695,11 @@ main() {
         printf "  %b S70piknkmain is disabled, skipping service restart\\n" "${INFO}"
     fi
 
-    if [[ "${NGINX_ENABLED}" == true ]]; then
-        restart_service nginx
-        enable_service nginx
-    else
-        printf "  %b Nginx is disabled, skipping service restart\\n" "${INFO}"
-    fi
+    # if [[ "${NGINX_ENABLED}" == true ]]; then
+    #     restart_service nginx
+    # else
+    #     printf "  %b Nginx is disabled, skipping service restart\\n" "${INFO}"
+    # fi
 
     printf "  %b Restarting services...\\n" "${INFO}"
 
