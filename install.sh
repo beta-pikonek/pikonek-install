@@ -726,8 +726,8 @@ configurePiVPN() {
     echo -e "           - '51820:51820/udp'"
     echo -e "           - '51821:51821/tcp'"
     echo -e "       environment:"
-    echo -e "           LANG=en"
-    echo -e "           WG_HOST=0.0.0.0" # change this in UI to public ip address
+    echo -e "           LANG: en"
+    echo -e "           WG_HOST: 0.0.0.0" # change this in UI to public ip address
     echo -e "           WG_DEFAULT_DNS: 10.8.0.1" # machine ip address
     echo -e "           PASSWORD: ${1}"
     echo -e "       volumes:"
@@ -2687,6 +2687,13 @@ main() {
         /usr/local/bin/pikonek -a -p "${pw}"
         # configure pihole docker
         configurePihole $pw
+    fi
+
+    if [[ ! -f "${PIKONEK_LOCAL_REPO}/vpn/docker-compose.yaml" ]]; then
+        # Add password to web UI if there is none
+        pw=""
+        # generate a random password
+        pw=$(tr -dc _A-Z-a-z-0-9 < /dev/urandom | head -c 8)
         # configure pivpn docker
         configurePiVPN $pw
     fi
